@@ -103,5 +103,5 @@ self-healing-infra/
 ## 👨‍💻 Author
 **Karna Maddali**  
 *DevOps & Cloud Automation Enthusiast*  
-📧 [your.email@example.com](mailto:your.email@example.com)  
-🔗 [GitHub Repository](https://github.com/yourusername/self-healing-infra)
+📧 [maddalikarna9.email@example.com](mailto:your.email@example.com)  
+🔗 [GitHub Repository](https://github.com/KARNA-MADDALI/self-healing-infrastructure)
