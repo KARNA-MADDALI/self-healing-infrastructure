@@ -67,10 +67,10 @@ Below are screenshots demonstrating the end-to-end self-healing process:
 
 | Stage | Description | Screenshot |
 |--------|--------------|-------------|
-| **1** | Prometheus detecting `probe_success=0` | ![Prometheus Alert](./images/prometheus_alert.png) |
-| **2** | Alert fired in Alertmanager | ![Alertmanager Dashboard](./images/alertmanager_firing.png) |
-| **3** | Webhook received alert and executed Ansible | ![Webhook Logs](./images/webhook_logs.png) |
-| **4** | Auto-recovery confirmation in Ansible logs | ![Heal Log](./images/ansible_success.png) |
+| **1** | Prometheus detecting `probe_success=0` | ![Prometheus Alert](./images/img2.png) |
+| **2** | Alert fired in Alertmanager | ![Alertmanager Dashboard](./images/img3.png) |
+| **3** | Webhook received alert and executed Ansible | ![Webhook Logs](./images/img3.png) |
+| **4** | Auto-recovery confirmation in Ansible logs | ![Heal Log](./images/img1.png) |
 
 > 🖼️ *(Place the above images in a folder named `images/` within your project directory.)*
 
