@@ -1,0 +1,81 @@
+version: "3.9"
+
+services:
+  # ---------------- Prometheus ----------------
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      # ✅ Mount main config file
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      # ✅ Mount rules file (name must match rule_files: in prometheus.yml)
+      - ./prometheus/rules.yml:/etc/prometheus/rules.yml:ro
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+    ports:
+      - "9090:9090"
+    networks:
+      - selfheal-net
+
+  # ---------------- Alertmanager ----------------
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+      - --storage.path=/alertmanager
+    ports:
+      - "9093:9093"
+    networks:
+      - selfheal-net
+
+  # ---------------- Flask Webhook ----------------
+  webhook_receiver:
+    build:
+      context: ./webhook
+      dockerfile: Dockerfile
+    image: self-healing-infra-webhook:latest
+    container_name: webhook_receiver
+    ports:
+      - "5001:5001"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock   # Required for restarting containers
+    depends_on:
+      - alertmanager
+    networks:
+      - selfheal-net
+
+  # ---------------- Demo NGINX ----------------
+  demo_nginx:
+    image: nginx:stable
+    container_name: demo_nginx
+    ports:
+      - "8080:80"
+    networks:
+      - selfheal-net
+
+  # ---------------- Node Exporter ----------------
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    networks:
+      - selfheal-net
+
+  # ---------------- Blackbox Exporter ----------------
+  blackbox:
+    image: prom/blackbox-exporter:latest
+    container_name: blackbox
+    ports:
+      - "9115:9115"
+    networks:
+      - selfheal-net
+
+# ---------------- Network ----------------
+networks:
+  selfheal-net:
+    driver: bridge
+

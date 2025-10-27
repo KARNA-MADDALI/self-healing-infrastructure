@@ -1,0 +1,11 @@
+groups:
+  - name: demo_rules
+    rules:
+      - alert: DemoNginxDown
+        expr: up{job="blackbox"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Demo Nginx is down"
+          description: "The demo Nginx server is not reachable."

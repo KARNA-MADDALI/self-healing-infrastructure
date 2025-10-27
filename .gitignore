@@ -1,0 +1,34 @@
+cat > .gitignore << 'EOF'
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+*.egg-info/
+
+# Logs
+*.log
+*.sqlite3
+
+# Docker
+docker-compose.override.yml
+*.env
+**/secrets.yml
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Build artifacts
+/dist/
+/build/
+*.tar.gz
+
+# Git LFS pointer files (if you use LFS, keep)
+#*.psd
+EOF

@@ -1,0 +1,47 @@
+global:
+  scrape_interval: 15s            # How often Prometheus scrapes metrics
+  evaluation_interval: 15s        # How often Prometheus evaluates alert rules
+
+# --- Alertmanager integration ---
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+# --- Alert rules ---
+rule_files:
+  - /etc/prometheus/rules.yml     # Make sure this path matches the volume in docker-compose
+
+# --- Scrape configurations ---
+scrape_configs:
+  # 1. Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090']
+
+  # 2. Node Exporter
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['node_exporter:9100']
+
+  # 3. Blackbox Exporter (probes NGINX)
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - http://demo_nginx:80     # Target NGINX container inside the Docker network
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115   # Send all probes to the blackbox exporter
+
+  # 4. Alertmanager (for self-monitoring)
+  - job_name: 'alertmanager'
+    static_configs:
+      - targets: ['alertmanager:9093']
+

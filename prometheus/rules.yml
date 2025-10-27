@@ -1,0 +1,23 @@
+groups:
+  - name: self_healing_rules
+    rules:
+      # 🔥 Alert when the NGINX container stops responding
+      - alert: DemoNginxDown
+        expr: probe_success{job="blackbox", instance="http://demo_nginx:80"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Demo NGINX is down"
+          description: "The NGINX container (demo_nginx) is not responding to HTTP probes."
+
+      # ⚙️ Optional: Alert when CPU is too high
+      - alert: HighCpuUsage
+        expr: 100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 90
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU > 90% on {{ $labels.instance }}"
+

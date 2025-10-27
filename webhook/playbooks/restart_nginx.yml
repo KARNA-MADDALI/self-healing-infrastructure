@@ -1,0 +1,29 @@
+---
+- name: Restart NGINX container or service
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Try to restart docker container demo_nginx
+      shell: |
+        if docker ps -a --format '{{ "{{.Names}}" }}' | grep -q '^demo_nginx$'; then
+          docker restart demo_nginx || docker start demo_nginx
+          echo "restarted container"
+        else
+          echo "container not found"
+          exit 1
+        fi
+      register: docker_restart
+      ignore_errors: yes
+
+    - name: "Fallback: restart systemd nginx (if container not present)"
+      become: yes
+      service:
+        name: nginx
+        state: restarted
+      ignore_errors: yes
+
+    - name: Report recovery result
+      debug:
+        msg: "Recovery attempted. docker_restart.rc={{ docker_restart.rc }} stdout={{ docker_restart.stdout }}"
